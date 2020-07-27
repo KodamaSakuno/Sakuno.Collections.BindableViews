@@ -35,6 +35,15 @@
         "resolved": "2.4.2",
         "contentHash": "Trt9multph2KE3U0p9oBt0k4Fq6lUv4btUcONaQEeuFnMCak2k/b7PAArbLtMFW7HO1jxlBHUgIPKEqci3Y1dg=="
       },
+      "Xunit.StaFact": {
+        "type": "Direct",
+        "requested": "[1.0.33-beta, )",
+        "resolved": "1.0.33-beta",
+        "contentHash": "XmCcHPINX1oJVOVH73iDVtAQF6M7SwySE5HckbfAfbid3vDcmX1WN8pSY49O7MwFiVHg1gWb6i6nskOZrav1KA==",
+        "dependencies": {
+          "xunit.extensibility.execution": "2.4.1"
+        }
+      },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
         "resolved": "16.6.1",
@@ -1092,7 +1101,7 @@
         "type": "Project"
       }
     },
-    ".NETFramework,Version=v4.6.2": {
+    ".NETFramework,Version=v4.7.2": {
       "coverlet.collector": {
         "type": "Direct",
         "requested": "[1.3.0, )",
@@ -1124,6 +1133,15 @@
         "requested": "[2.4.2, )",
         "resolved": "2.4.2",
         "contentHash": "Trt9multph2KE3U0p9oBt0k4Fq6lUv4btUcONaQEeuFnMCak2k/b7PAArbLtMFW7HO1jxlBHUgIPKEqci3Y1dg=="
+      },
+      "Xunit.StaFact": {
+        "type": "Direct",
+        "requested": "[1.0.33-beta, )",
+        "resolved": "1.0.33-beta",
+        "contentHash": "XmCcHPINX1oJVOVH73iDVtAQF6M7SwySE5HckbfAfbid3vDcmX1WN8pSY49O7MwFiVHg1gWb6i6nskOZrav1KA==",
+        "dependencies": {
+          "xunit.extensibility.execution": "2.4.1"
+        }
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
