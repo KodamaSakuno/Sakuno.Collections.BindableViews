@@ -72,6 +72,21 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
+        public void InnerDuplicatedObservableCollections_Add()
+        {
+            var source = new ObservableCollection<int>();
+            var concatenated = new ConcatenatedCollectionView<int>(new[] { source, source });
+
+            Assert.Empty(concatenated);
+
+            source.Add(1);
+            source.Add(3);
+
+            Assert.Equal(4, concatenated.Count);
+            Assert.Equal(new[] { 1, 3, 1, 3 }, concatenated);
+        }
+
+        [Fact]
         public void BothObservableCollections_Add()
         {
             var outer = new ObservableCollection<ObservableCollection<int>>();
@@ -130,6 +145,21 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
+        public void InnerDuplicatedObservableCollections_Remove()
+        {
+            var source = new ObservableCollection<int>() { 1, 3, 2 };
+            var concatenated = new ConcatenatedCollectionView<int>(new[] { source, source });
+
+            Assert.Equal(6, concatenated.Count);
+            Assert.Equal(new[] { 1, 3, 2, 1, 3, 2 }, concatenated);
+
+            source.Remove(3);
+
+            Assert.Equal(4, concatenated.Count);
+            Assert.Equal(new[] { 1, 2, 1, 2 }, concatenated);
+        }
+
+        [Fact]
         public void BothObservableCollections_Remove()
         {
             var inner = new ObservableCollection<int>() { 1, 5, 2, 4 };
@@ -185,6 +215,21 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
+        public void InnerDuplicatedObservableCollections_Replace()
+        {
+            var source = new ObservableCollection<int>() { 1, 3, 2 };
+            var concatenated = new ConcatenatedCollectionView<int>(new[] { source, source });
+
+            Assert.Equal(6, concatenated.Count);
+            Assert.Equal(new[] { 1, 3, 2, 1, 3, 2 }, concatenated);
+
+            source[0] = -1;
+
+            Assert.Equal(6, concatenated.Count);
+            Assert.Equal(new[] { -1, 3, 2, -1, 3, 2 }, concatenated);
+        }
+
+        [Fact]
         public void OuterObservableCollections_Clear()
         {
             var source = new ObservableCollection<int[]>()
@@ -217,6 +262,20 @@ namespace Sakuno.Collections.BindableViews.Tests
 
             Assert.Equal(5, concatenated.Count);
             Assert.Equal(new[] { 1, 2, 3, 7, 8 }, concatenated);
+        }
+
+        [Fact]
+        public void InnerDuplicatedObservableCollections_Clear()
+        {
+            var source = new ObservableCollection<int>() { 1, 2, 3 };
+            var concatenated = new ConcatenatedCollectionView<int>(new[] { source, source });
+
+            Assert.Equal(6, concatenated.Count);
+            Assert.Equal(new[] { 1, 2, 3, 1, 2, 3 }, concatenated);
+
+            source.Clear();
+
+            Assert.Empty(concatenated);
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Controls;
 using Xunit;
@@ -40,6 +38,20 @@ namespace Sakuno.Collections.BindableViews.Tests
             a.Add(3);
 
             Assert.Equal<object>(new[] { 1, 3, 2 }, itemsControl.Items);
+        }
+
+        [WpfFact]
+        public void InnerDuplicatedObservableCollections_Add()
+        {
+            var source = new ObservableCollection<int>();
+            var itemsControl = new ItemsControl() { ItemsSource = new ConcatenatedCollectionView<int>(new[] { source, source }) };
+
+            Assert.Empty(itemsControl.Items);
+
+            source.Add(1);
+            source.Add(3);
+
+            Assert.Equal<object>(new[] { 1, 3, 1, 3 }, itemsControl.Items);
         }
 
         [WpfFact]
@@ -96,6 +108,19 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [WpfFact]
+        public void InnerDuplicatedObservableCollections_Remove()
+        {
+            var source = new ObservableCollection<int>() { 1, 3, 2 };
+            var itemsControl = new ItemsControl() { ItemsSource = new ConcatenatedCollectionView<int>(new[] { source, source }) };
+
+            Assert.Equal<object>(new[] { 1, 3, 2, 1, 3, 2 }, itemsControl.Items);
+
+            source.Remove(3);
+
+            Assert.Equal<object>(new[] { 1, 2, 1, 2 }, itemsControl.Items);
+        }
+
+        [WpfFact]
         public void BothObservableCollections_Remove()
         {
             var inner = new ObservableCollection<int>() { 1, 5, 2, 4 };
@@ -147,6 +172,19 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [WpfFact]
+        public void InnerDuplicatedObservableCollections_Replace()
+        {
+            var source = new ObservableCollection<int>() { 1, 3, 2 };
+            var itemsControl = new ItemsControl() { ItemsSource = new ConcatenatedCollectionView<int>(new[] { source, source }) };
+
+            Assert.Equal<object>(new[] { 1, 3, 2, 1, 3, 2 }, itemsControl.Items);
+
+            source[0] = -1;
+
+            Assert.Equal<object>(new[] { -1, 3, 2, -1, 3, 2 }, itemsControl.Items);
+        }
+
+        [WpfFact]
         public void OuterObservableCollections_Clear()
         {
             var source = new ObservableCollection<int[]>()
@@ -176,6 +214,19 @@ namespace Sakuno.Collections.BindableViews.Tests
             b.Clear();
 
             Assert.Equal<object>(new[] { 1, 2, 3, 7, 8 }, itemsControl.Items);
+        }
+
+        [WpfFact]
+        public void InnerDuplicatedObservableCollections_Clear()
+        {
+            var source = new ObservableCollection<int>() { 1, 2, 3 };
+            var itemsControl = new ItemsControl() { ItemsSource = new ConcatenatedCollectionView<int>(new[] { source, source }) };
+
+            Assert.Equal<object>(new[] { 1, 2, 3, 1, 2, 3 }, itemsControl.Items);
+
+            source.Clear();
+
+            Assert.Empty(itemsControl.Items);
         }
     }
 }
