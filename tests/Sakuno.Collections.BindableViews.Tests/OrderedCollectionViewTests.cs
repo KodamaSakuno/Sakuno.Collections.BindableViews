@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using Xunit;
 
 namespace Sakuno.Collections.BindableViews.Tests
@@ -26,6 +27,64 @@ namespace Sakuno.Collections.BindableViews.Tests
 
             Assert.Equal(-1, ordered.IndexOf(-1));
             Assert.False(ordered.Contains(-1));
+        }
+
+        [Fact]
+        public void ObservableCollection_Add()
+        {
+            var source = new ObservableCollection<int>() { 5, 1, 1 };
+            var ordered = new OrderedCollectionView<int>(source);
+
+            Assert.Equal(3, ordered.Count);
+            Assert.Equal(new[] { 1, 1, 5 }, ordered);
+
+            source.Add(2);
+
+            Assert.Equal(4, ordered.Count);
+            Assert.Equal(new[] { 1, 1, 2, 5 }, ordered);
+        }
+
+        [Fact]
+        public void ObservableCollection_Remove()
+        {
+            var source = new ObservableCollection<int>() { 5, 1, 8, 4 };
+            var ordered = new OrderedCollectionView<int>(source);
+
+            Assert.Equal(4, ordered.Count);
+            Assert.Equal(new[] { 1, 4, 5, 8 }, ordered);
+
+            source.Remove(4);
+
+            Assert.Equal(3, ordered.Count);
+            Assert.Equal(new[] { 1, 5, 8 }, ordered);
+        }
+
+        [Fact]
+        public void ObservableCollection_Replace()
+        {
+            var source = new ObservableCollection<int>() { 5, 1, 8, 4 };
+            var ordered = new OrderedCollectionView<int>(source);
+
+            Assert.Equal(4, ordered.Count);
+            Assert.Equal(new[] { 1, 4, 5, 8 }, ordered);
+
+            source[3] = 9;
+
+            Assert.Equal(new[] { 1, 5, 8, 9 }, ordered);
+        }
+
+        [Fact]
+        public void ObservableCollection_Clear()
+        {
+            var source = new ObservableCollection<int>() { 3, 1, 2 };
+            var ordered = new OrderedCollectionView<int>(source);
+
+            Assert.Equal(3, ordered.Count);
+            Assert.Equal(new[] { 1, 2, 3 }, ordered);
+
+            source.Clear();
+
+            Assert.Empty(ordered);
         }
     }
 }
