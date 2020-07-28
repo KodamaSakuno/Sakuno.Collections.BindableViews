@@ -19,6 +19,20 @@ namespace Sakuno.Collections.BindableViews.Tests
 
             Assert.Equal(7, concatenated.Count);
             Assert.Equal(new[] { 1, 2, 3, 99, 88, 9, 10 }, concatenated);
+
+            Assert.Equal(2, concatenated[1]);
+            Assert.Equal(99, concatenated[3]);
+            Assert.Equal(10, concatenated[6]);
+
+            Assert.Equal(1, concatenated.IndexOf(2));
+            Assert.Equal(3, concatenated.IndexOf(99));
+            Assert.Equal(6, concatenated.IndexOf(10));
+            Assert.True(concatenated.Contains(2));
+            Assert.True(concatenated.Contains(99));
+            Assert.True(concatenated.Contains(10));
+
+            Assert.Equal(-1, concatenated.IndexOf(-1));
+            Assert.False(concatenated.Contains(-1));
         }
 
         [Fact]

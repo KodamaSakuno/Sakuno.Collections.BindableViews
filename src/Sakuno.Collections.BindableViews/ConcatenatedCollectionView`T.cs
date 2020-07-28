@@ -66,14 +66,12 @@ namespace Sakuno.Collections.BindableViews
             {
                 case NotifyCollectionChangedAction.Add:
                     {
-                        var newItems = new List<T>();
+                        var offset = GetOffset(e.NewStartingIndex);
 
                         for (var i = 0; i < e.NewItems.Count; i++)
                         {
                             var newItem = (IReadOnlyList<T>)e.NewItems[i];
                             var node = AddItem(newItem, e.NewStartingIndex + i);
-
-                            newItems.AddRange(node.Snapshot);
 
                             if (newItem is INotifyCollectionChanged notifyCollectionChanged && !_notifyCollectionChanged.Contains(notifyCollectionChanged))
                             {
@@ -81,22 +79,20 @@ namespace Sakuno.Collections.BindableViews
 
                                 notifyCollectionChanged.CollectionChanged += OnSubCollectionChanged;
                             }
-                        }
 
-                        NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems, GetOffset(e.NewStartingIndex)));
+                            foreach (var item in node.Snapshot)
+                                NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, offset++));
+                        }
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
                     {
-                        var oldItems = new List<T>();
                         var offset = GetOffset(e.OldStartingIndex);
 
                         foreach (IReadOnlyList<T> oldItem in e.OldItems)
                         {
                             var node = RemoveItem(oldItem, e.OldStartingIndex);
-
-                            oldItems.AddRange(node.Snapshot);
 
                             if (oldItem is INotifyCollectionChanged notifyCollectionChanged && _notifyCollectionChanged.Contains(notifyCollectionChanged))
                             {
@@ -104,9 +100,10 @@ namespace Sakuno.Collections.BindableViews
 
                                 notifyCollectionChanged.CollectionChanged -= OnSubCollectionChanged;
                             }
-                        }
 
-                        NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems, offset));
+                            foreach (var item in node.Snapshot)
+                                NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, offset));
+                        }
                     }
                     break;
 
@@ -134,8 +131,11 @@ namespace Sakuno.Collections.BindableViews
                         }
 
                         var offset = GetOffset(e.NewStartingIndex);
-                        NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems, offset));
-                        NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node.Snapshot, offset));
+
+                        foreach (var item in oldItems)
+                            NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, offset));
+                        foreach (var item in node.Snapshot)
+                            NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, offset++));
                     }
                     break;
 
@@ -144,9 +144,9 @@ namespace Sakuno.Collections.BindableViews
 
                 case NotifyCollectionChangedAction.Reset:
                     foreach (var item in _notifyCollectionChanged)
-                        item.CollectionChanged -= OnSubCollectionChanged; ;
-                    _notifyCollectionChanged.Clear();
+                        item.CollectionChanged -= OnSubCollectionChanged;
 
+                    _notifyCollectionChanged.Clear();
                     _nodes.Clear();
 
                     if (_sources.Count > 0)
@@ -179,7 +179,10 @@ namespace Sakuno.Collections.BindableViews
             if (!_nodeMap.TryGetValue(collection, out var result))
                 _nodeMap[collection] = result = new Node(collection);
 
-            result.Indexes.Add(index);
+            var position = result.Indexes.BinarySearch(index);
+            if (position < 0)
+                result.Indexes.Insert(~position, index);
+
             _nodes.Insert(index, result);
 
             return result;
@@ -210,7 +213,12 @@ namespace Sakuno.Collections.BindableViews
                         snapshot.Insert(e.NewStartingIndex + i, (T)e.NewItems[i]);
 
                     foreach (var index in node.Indexes)
-                        NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, e.NewItems, GetOffset(index) + e.NewStartingIndex));
+                    {
+                        var offset = GetOffset(index);
+
+                        for (var i = 0; i < e.NewItems.Count; i++)
+                            NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, e.NewItems[i], offset + e.NewStartingIndex + i));
+                    }
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
@@ -218,7 +226,12 @@ namespace Sakuno.Collections.BindableViews
                         snapshot.RemoveAt(e.OldStartingIndex);
 
                     foreach (var index in node.Indexes)
-                        NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, e.OldItems, GetOffset(index) + e.OldStartingIndex));
+                    {
+                        var offset = GetOffset(index);
+
+                        for (var i = 0; i < e.OldItems.Count; i++)
+                            NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, e.OldItems[i], offset));
+                    }
                     break;
 
                 case NotifyCollectionChangedAction.Replace:
@@ -236,18 +249,26 @@ namespace Sakuno.Collections.BindableViews
 
                 case NotifyCollectionChangedAction.Reset:
                     {
-                        var oldItems = snapshot.ToArray();
-
                         snapshot.Clear();
                         if (node.Source.Count > 0)
                             snapshot.AddRange(node.Source);
 
                         foreach (var index in node.Indexes)
-                            NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems, GetOffset(index)));
+                        {
+                            var offset = GetOffset(index);
+
+                            foreach (var item in snapshot)
+                                NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, offset));
+                        }
 
                         if (snapshot.Count > 0)
                             foreach (var index in node.Indexes)
-                                NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, snapshot, GetOffset(index)));
+                            {
+                                var offset = GetOffset(index);
+
+                                for (var i = 0; i < snapshot.Count; i++)
+                                    NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, snapshot[i], offset + i));
+                            }
                     }
                     break;
             }
@@ -257,20 +278,23 @@ namespace Sakuno.Collections.BindableViews
         {
             var result = 0;
 
-            foreach (var node in _nodes)
-                result += node.Snapshot.Count;
+            for (var i = 0; i < index; i++)
+                result += _nodes[i].Snapshot.Count;
 
             return result;
         }
 
         public int IndexOf(T item)
         {
-            for (var i = 0; i < _nodes.Count; i++)
+            var offset = 0;
+
+            foreach (var node in _nodes)
             {
-                var node = _nodes[i];
                 var result = node.Snapshot.IndexOf(item);
                 if (result != -1)
-                    return result + GetOffset(i);
+                    return result + offset;
+
+                offset += node.Snapshot.Count;
             }
 
             return -1;
@@ -317,14 +341,14 @@ namespace Sakuno.Collections.BindableViews
             public IReadOnlyList<T> Source { get; }
             public List<T> Snapshot { get; }
 
-            public ISet<int> Indexes { get; }
+            public List<int> Indexes { get; }
 
             public Node(IReadOnlyList<T> source)
             {
                 Source = source;
                 Snapshot = new List<T>(source);
 
-                Indexes = new HashSet<int>();
+                Indexes = new List<int>();
             }
         }
     }

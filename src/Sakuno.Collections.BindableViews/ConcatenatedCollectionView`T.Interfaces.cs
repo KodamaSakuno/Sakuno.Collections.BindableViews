@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace Sakuno.Collections.BindableViews
 {
@@ -26,24 +25,7 @@ namespace Sakuno.Collections.BindableViews
         void IList.Insert(int index, object value) => throw new NotSupportedException();
         void IList.Remove(object value) => throw new NotSupportedException();
         void IList.RemoveAt(int index) => throw new NotSupportedException();
-        void ICollection.CopyTo(Array array, int index)
-        {
-            if (array == null)
-                throw new ArgumentNullException(nameof(array));
-            if (array.Rank != 1 || !(array is T[] target))
-                throw new ArgumentException(nameof(array));
-            if (array.Length < Count + index)
-                throw new IndexOutOfRangeException();
-
-            var offset = 0;
-
-            foreach (var node in _nodes)
-            {
-                node.Snapshot.CopyTo(target, offset);
-
-                offset += node.Snapshot.Count;
-            }
-        }
+        void ICollection.CopyTo(Array array, int index) => throw new NotSupportedException();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
