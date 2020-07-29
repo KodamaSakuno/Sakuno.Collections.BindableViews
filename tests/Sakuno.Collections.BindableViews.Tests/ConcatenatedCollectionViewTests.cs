@@ -7,7 +7,7 @@ namespace Sakuno.Collections.BindableViews.Tests
     public class ConcatenatedCollectionViewTests
     {
         [Fact]
-        public void SimpleCollections()
+        public void SimpleCollection()
         {
             var sources = new[]
             {
@@ -36,7 +36,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void OuterObservableCollections_Add()
+        public void OuterObservableCollection_Add()
         {
             var source = new ObservableCollection<int[]>()
             {
@@ -55,7 +55,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void InnerObservableCollections_Add()
+        public void InnerObservableCollection_Add()
         {
             var a = new ObservableCollection<int>();
             var b = new ObservableCollection<int>();
@@ -72,7 +72,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void InnerDuplicatedObservableCollections_Add()
+        public void InnerDuplicatedObservableCollection_Add()
         {
             var source = new ObservableCollection<int>();
             var concatenated = new ConcatenatedCollectionView<int>(new[] { source, source });
@@ -87,7 +87,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void BothObservableCollections_Add()
+        public void BothObservableCollection_Add()
         {
             var outer = new ObservableCollection<ObservableCollection<int>>();
             var inner = new ObservableCollection<int>();
@@ -107,7 +107,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void OuterObservableCollections_Remove()
+        public void OuterObservableCollection_Remove()
         {
             var source = new ObservableCollection<int[]>()
             {
@@ -127,7 +127,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void InnerObservableCollections_Remove()
+        public void InnerObservableCollection_Remove()
         {
             var a = new ObservableCollection<int>() { 1, 3, 2 };
             var b = new ObservableCollection<int>() { 4 };
@@ -145,7 +145,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void InnerDuplicatedObservableCollections_Remove()
+        public void InnerDuplicatedObservableCollection_Remove()
         {
             var source = new ObservableCollection<int>() { 1, 3, 2 };
             var concatenated = new ConcatenatedCollectionView<int>(new[] { source, source });
@@ -160,7 +160,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void BothObservableCollections_Remove()
+        public void BothObservableCollection_Remove()
         {
             var inner = new ObservableCollection<int>() { 1, 5, 2, 4 };
             var outer = new ObservableCollection<ObservableCollection<int>>() { inner };
@@ -178,7 +178,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void OuterObservableCollections_Replace()
+        public void OuterObservableCollection_Replace()
         {
             var source = new ObservableCollection<int[]>()
             {
@@ -198,7 +198,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void InnerObservableCollections_Replace()
+        public void InnerObservableCollection_Replace()
         {
             var a = new ObservableCollection<int>() { 1, 3, 2 };
             var b = new ObservableCollection<int>() { 4, 5, 6 };
@@ -215,7 +215,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void InnerDuplicatedObservableCollections_Replace()
+        public void InnerDuplicatedObservableCollection_Replace()
         {
             var source = new ObservableCollection<int>() { 1, 3, 2 };
             var concatenated = new ConcatenatedCollectionView<int>(new[] { source, source });
@@ -230,7 +230,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void OuterObservableCollections_Clear()
+        public void OuterObservableCollection_Clear()
         {
             var source = new ObservableCollection<int[]>()
             {
@@ -248,7 +248,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void InnerObservableCollections_Clear()
+        public void InnerObservableCollection_Clear()
         {
             var a = new ObservableCollection<int>() { 1, 2, 3 };
             var b = new ObservableCollection<int>() { 4, 5, 6 };
@@ -265,7 +265,7 @@ namespace Sakuno.Collections.BindableViews.Tests
         }
 
         [Fact]
-        public void InnerDuplicatedObservableCollections_Clear()
+        public void InnerDuplicatedObservableCollection_Clear()
         {
             var source = new ObservableCollection<int>() { 1, 2, 3 };
             var concatenated = new ConcatenatedCollectionView<int>(new[] { source, source });

@@ -7,7 +7,7 @@ namespace Sakuno.Collections.BindableViews.Tests
     public class OrderedCollectionViewWpfTests
     {
         [WpfFact]
-        public void SimpleCollections()
+        public void SimpleCollection()
         {
             var source = new[] { 5, 1, 9, 2, 4, 10, 8 };
             var itemsControl = new ItemsControl() { ItemsSource = new OrderedCollectionView<int>(source) };
